@@ -1,0 +1,33 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashscreenActivity">
+
+    <ImageView
+        android:id="@+id/hh_iw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#58ACF7"
+        android:contentDescription="@string/hh"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:src="@mipmap/logo"
+        tools:ignore="ImageContrastCheck" />
+
+    <!--<ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="70dp"
+        android:scaleType="center"
+        android:src="@drawable/nordic_logo"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="6dp"
+        android:src="@drawable/background_title"/>-->
+
+</merge>
