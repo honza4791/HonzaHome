@@ -16,7 +16,7 @@ public class SplashscreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splashscreen);
 
         new Handler().postDelayed(() -> {
-            final Intent newIntent = new Intent(SplashscreenActivity.this, MainActivity.class);
+            final Intent newIntent = new Intent(SplashscreenActivity.this, FeaturesActivity.class);
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(newIntent);
             finish();

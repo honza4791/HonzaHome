@@ -3,7 +3,6 @@ package com.example.honzahome;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -12,7 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RequestSwitch.AsyncResponse {
+
+public class TempActivity extends AppCompatActivity implements GetRequestActivity.AsyncResponse {
 
     Button btnSwitch;
     TextView txtState, txtTemp, txtHum;
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements RequestSwitch.Asy
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_temp);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -35,11 +35,11 @@ public class MainActivity extends AppCompatActivity implements RequestSwitch.Asy
             }
         });
 
-        new RequestSwitch(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=l");
+        new GetRequestActivity(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=l");
     }
 
     private void clicked() {
-        new RequestSwitch(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=s");
+        new GetRequestActivity(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=s");
     }
 
     @Override

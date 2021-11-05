@@ -1,7 +1,7 @@
 package com.example.honzahome;
 
 import android.os.AsyncTask;
-import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class RequestSwitch extends AsyncTask<String , Void ,String> {
+public class GetRequestActivity extends AsyncTask<String , Void ,String> {
     String server_response;
 
     @Override
@@ -44,9 +44,9 @@ public class RequestSwitch extends AsyncTask<String , Void ,String> {
         void processFinish(String output);
     }
 
-    public RequestSwitch.AsyncResponse delegate = null;
+    public GetRequestActivity.AsyncResponse delegate = null;
 
-    public RequestSwitch(RequestSwitch.AsyncResponse delegate){
+    public GetRequestActivity(GetRequestActivity.AsyncResponse delegate){
         this.delegate = delegate;
     }
 

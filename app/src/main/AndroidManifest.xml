@@ -19,14 +19,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="MainActivity"/>
+            android:name=".TempActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LightActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FeaturesActivity"
+            android:exported="false" />
     </application>
-
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
 </manifest>
