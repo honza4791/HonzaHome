@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/backgroundColor"
+    android:gravity="center_horizontal"
+    android:paddingTop="20dp">
+
+    <Button
+        android:id="@+id/btnTemp"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/roundcorner"
+        android:drawableTop="@mipmap/ic_temp"
+        android:padding="5dp"
+        android:text="@string/temp"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/btnLight"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/roundcorner"
+        android:drawableTop="@mipmap/ic_light"
+        android:padding="5dp"
+        android:text="@string/light"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        tools:ignore="TextContrastCheck" />
+
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/roundcorner"
+        android:drawableTop="@mipmap/ic_settings"
+        android:padding="5dp"
+        android:text="@string/settings"
+        android:textColor="@color/white"
+        android:textSize="12dp"
+        tools:ignore="TextContrastCheck" />
+</LinearLayout>
+</ScrollView>

@@ -15,7 +15,7 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="state">State:\u0020</string>
     <string name="na">N/A</string>
-    <string name="temp">HonzaTemp</string>
+    <string name="temp">HonzaMeteor</string>
     <string name="light">HonzaYeelight</string>
     <!-- Light -->
     <string name="on">ON</string>
@@ -28,4 +28,5 @@
     <string name="close">Close</string>
     <string name="search">search</string>
     <string name="connecting">connecting ...</string>
+    <string name="settings">settings</string>
 </resources>

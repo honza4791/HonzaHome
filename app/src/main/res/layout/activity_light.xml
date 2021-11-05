@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LightActivity"
+    android:id="@+id/all"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnSel"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/select_device" />
+
+        <Button
+            android:id="@+id/btnOnOff"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/on"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtBright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/brightness"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"/>
+
+            <TextView
+                android:id="@+id/txtStateBval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/not_connected"
+                android:layout_weight="1"
+                android:gravity="center_vertical"/>
+        </LinearLayout>
+
+
+        <SeekBar
+            android:id="@+id/seekBright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtCol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/color"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end"/>
+
+            <TextView
+                android:id="@+id/txtStateCval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/not_connected"
+                android:layout_weight="1"
+                android:gravity="center_vertical"/>
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="3000"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/progressLay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="@android:color/darker_gray"
+            android:indeterminate="false"
+            android:max="100"
+            android:padding="-15dp"
+            android:paddingTop="10dp"
+            android:progress="0"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            android:secondaryProgress="0"
+            android:scaleX="1.2"
+            android:scaleY="1.2"/>
+
+        <TextView
+            android:id="@+id/txtProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/progressBar"
+            android:layout_centerInParent="true"
+            android:text="@string/connecting"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnPrgClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/progressBar"
+            android:layout_centerInParent="false"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/roundbtn"
+            android:text="@string/close"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</RelativeLayout>
