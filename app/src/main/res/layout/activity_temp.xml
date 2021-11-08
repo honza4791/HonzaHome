@@ -7,11 +7,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Button
+        android:id="@+id/btn_update"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="-5dp"
+        android:text="@string/up"
+        tools:ignore="TextContrastCheck" />
+    <Button
         android:id="@+id/btn_switch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-5dp"
-        android:minHeight="100dp"
+        android:layout_height="50dp"
         android:text="@string/sw"
         tools:ignore="TextContrastCheck" />
 

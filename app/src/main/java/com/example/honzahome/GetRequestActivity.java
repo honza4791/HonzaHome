@@ -33,7 +33,7 @@ public class GetRequestActivity extends AsyncTask<String , Void ,String> {
             server_response = "N/A;N/A;MalformedURLException";
             e.printStackTrace();
         } catch (IOException e) {
-            server_response = "N/A;N/A;Exception";
+            server_response = "N/A;N/A;Refreshing ...";
             e.printStackTrace();
         }
 

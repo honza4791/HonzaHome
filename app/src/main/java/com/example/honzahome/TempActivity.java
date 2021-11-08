@@ -2,7 +2,10 @@ package com.example.honzahome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -14,31 +17,49 @@ import java.util.List;
 
 public class TempActivity extends AppCompatActivity implements GetRequestActivity.AsyncResponse {
 
-    Button btnSwitch;
+    Button btnSwitch, btnUpdate;
     TextView txtState, txtTemp, txtHum;
+    WifiManager mainWifi;
+    Handler handler = new Handler();
+    Runnable runnable;
+    int delay = 3*1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp);
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        if (checkWIFI() == false) {
+            mainWifi.setWifiEnabled(true);
+        }
+
         btnSwitch = findViewById(R.id.btn_switch);
+        btnUpdate = findViewById(R.id.btn_update);
         txtState = findViewById(R.id.txt_status_val);
         txtTemp = findViewById(R.id.txt_temp_val);
         txtHum = findViewById(R.id.txt_hum_val);
 
-        btnSwitch.setOnClickListener(new View.OnClickListener() {
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                clicked();
+                clickedU();
             }
         });
 
+        btnSwitch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                clickedS();
+            }
+        });
+
+        clickedU();
+    }
+
+    private void clickedU() {
         new GetRequestActivity(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=l");
     }
 
-    private void clicked() {
+    private void clickedS() {
         new GetRequestActivity(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=s");
     }
 
@@ -51,9 +72,44 @@ public class TempActivity extends AppCompatActivity implements GetRequestActivit
         } else if (s.equals("0")) {
             txtState.setText("OFF");
         } else {
-            txtState.setText("ERROR");
+            txtState.setText(s);
         }
         txtTemp.setText(m.get(0) + " °C");
         txtHum.setText(m.get(1) + " %");
+    }
+
+    @Override
+    protected void onDestroy() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mainWifi.setWifiEnabled(false);
+        super.onDestroy();
+    }
+
+    public Boolean checkWIFI() {
+        Boolean stateWIFI = false;
+
+        mainWifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (mainWifi.isWifiEnabled()) {
+            stateWIFI = true;
+        }
+        return stateWIFI;
+    }
+
+    @Override
+    protected void onResume() {
+
+        handler.postDelayed( runnable = new Runnable() {
+            public void run() {
+                clickedU();
+                handler.postDelayed(runnable, delay);
+            }
+        }, delay);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        handler.removeCallbacks(runnable);
+        super.onPause();
     }
 }

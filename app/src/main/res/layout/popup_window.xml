@@ -3,12 +3,14 @@
     android:id="@+id/popup_element"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorSecondary">
 
     <Button
         android:id="@+id/btnClose"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="-5dp"
         android:gravity="center"
         android:text="@string/close"
         />
@@ -16,20 +18,61 @@
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="@string/search" />
+        android:layout_height="50dp"
+        android:text="@string/search"
+        android:layout_marginBottom="-5dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp" >
+
+        <TextView
+            android:id="@+id/txtCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:textColor="#FFFFFF"
+            android:text="@string/ip" />
+
+        <TextView
+            android:id="@+id/txtIP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:textColor="#FFFFFF"
+            android:text="@string/na" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FFFFFF" >
+    </View>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="#FFFFFF"
+        android:text="@string/found" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#ffffff">
+        android:background="@color/colorSecondary">
 
         <ListView
             android:id="@+id/deviceList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
+            android:layout_height="wrap_content">
+        </ListView>
     </LinearLayout>
 
 </LinearLayout>

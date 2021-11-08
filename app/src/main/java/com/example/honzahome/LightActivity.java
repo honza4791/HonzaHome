@@ -7,7 +7,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,11 +43,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class LightActivity extends AppCompatActivity {
 
     /* MAIN */
-    TextView stateB, stateC;
+    TextView stateB, stateC, txtConIp;
     Button button, btnSel, btnClose, btnSearch, btnPrgClose;
     YeelightDevice device;
     SeekBar bright, color;
@@ -56,10 +54,11 @@ public class LightActivity extends AppCompatActivity {
     PopupWindow popupWindow;
     SharedPreferences settings;
     String ip;
-    Integer prog;
-    RelativeLayout progressLay;
+    Integer prog, br, ct;
+    RelativeLayout progressLay, allLay;
     ProgressBar progressBar;
     Boolean connected;
+    Handler handler = new Handler();
     /* /MAIN */
 
     /* SEARCH */
@@ -109,10 +108,10 @@ public class LightActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_temp);
+        setContentView(R.layout.activity_light);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         connected = false;
-
         stateB = findViewById(R.id.txtStateBval);
         stateC = findViewById(R.id.txtStateCval);
         button = findViewById(R.id.btnOnOff);
@@ -121,41 +120,28 @@ public class LightActivity extends AppCompatActivity {
         color = findViewById(R.id.seekColor);
         btnSel  = findViewById(R.id.btnSel);
         progressLay = findViewById(R.id.progressLay);
+        allLay = findViewById(R.id.all);
         progressBar = findViewById(R.id.progressBar);
-
+        prog = 1;
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
-            /*
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(true);
-            builder.setTitle("Title");
-            builder.setMessage("Message");
-            builder.setPositiveButton("Confirm",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-
-            AlertDialog dialog = builder.create();
-            dialog.show();
-             */
         }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         settings = PreferenceManager.getDefaultSharedPreferences(this);
-        //192.168.1.173
-        ip = settings.getString("ip","").toString();
 
-        if (ip == "") {
+        ip = settings.getString("ip","").toString();
+        br = Integer.valueOf(settings.getString("br","1").toString());
+        ct = Integer.valueOf(settings.getString("ct","2701").toString());
+        changeBC();
+
+        if (checkWIFI() == false) {
+            mainWifi.setWifiEnabled(true);
+        }
+
+        if (ip.equals("")) {
             progressLay.setVisibility(View.INVISIBLE);
+            selClicked();
         } else {
             progressLay.setVisibility(View.VISIBLE);
             btnPrgClose.setOnClickListener(new View.OnClickListener() {
@@ -165,99 +151,27 @@ public class LightActivity extends AppCompatActivity {
             });
         }
 
-        if (checkWIFI() == false) {
-            mainWifi.setWifiEnabled(true);
-        }
-
         button.setOnClickListener(v -> {
 
             Thread thread = new Thread(() -> {
                 try{
-                    changeDevice(ip);
-                    /*int brightness = Integer.valueOf(device.getProperties(BRIGHTNESS).values().iterator().next());
-                    int colortemp = Integer.valueOf(device.getProperties(COLOR_TEMPERATURE).values().iterator().next());
-                    String pow = device.getProperties(POWER).values().iterator().next();
-
-                    if (pow.equals("on")) {
-
-                    } else {
-                        color.setProgress(colortemp - 2700);
-                        bright.setProgress(brightness);
-                    }*/
+                    setDevice();
                     device.toggle();
                 } catch(NoClassDefFoundError e){
-                    System.out.println("Error " + e.getMessage());
+                    System.out.println("Error1 " + e.getMessage());
                 } catch (YeelightSocketException e) {
-                    System.out.println("Error " + e.getMessage());
+                    System.out.println("Error2 " + e.getMessage());
                 } catch (YeelightResultErrorException e) {
-                    System.out.println("Error " + e.getMessage());
+                    System.out.println("Error3 " + e.getMessage());
                 }  catch(Exception e){
-                    System.out.println("Error " + e.getMessage());
+                    System.out.println("Error4 " + e.getMessage());
                 }
             });
             thread.start();
         });
 
         btnSel.setOnClickListener(v -> {
-            LayoutInflater inflater = (LayoutInflater)
-                    getSystemService(LAYOUT_INFLATER_SERVICE);
-            View layout = inflater.inflate(R.layout.popup_window,
-                    (ViewGroup) LightActivity.this.findViewById(R.id.popup_element));
-
-            int width = LinearLayout.LayoutParams.MATCH_PARENT;
-            int height = LinearLayout.LayoutParams.MATCH_PARENT;
-            boolean focusable = true; // lets taps outside the popup also dismiss it
-            popupWindow = new PopupWindow(layout, width, height, focusable);
-
-            popupWindow.showAtLocation(v, Gravity.BOTTOM, 0, 0);
-
-            btnClose = layout.findViewById(R.id.btnClose);
-            btnSearch = layout.findViewById(R.id.btnSearch);
-            mListView = layout.findViewById(R.id.deviceList);
-
-            mAdapter = new MyAdapter(this);
-            mListView.setAdapter(mAdapter);
-            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    HashMap<String, String> bulbInfo = mDeviceList.get(position);
-                    String ipinfo = bulbInfo.get("Location").replaceAll(" ","");
-                    Log.d(TAG, "lcheck = " + ipinfo);
-                    String new_ip = ipinfo.split(":")[0];
-                    String new_port = ipinfo.split(":")[1];
-
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putString("ip", new_ip);
-                    editor.commit();
-
-                    ip = settings.getString("ip","").toString();
-
-                    mDeviceList.clear();
-
-                    changeDevice(ip);
-
-                    onClickedClose();
-                }
-            });
-
-            WifiManager wm = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            multicastLock = wm.createMulticastLock("test");
-            multicastLock.acquire();
-
-            btnClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickedClose();
-                }
-            });
-
-            btnSearch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    searchDevice();
-                }
-
-            });
+            selClicked();
         });
 
         bright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -284,18 +198,18 @@ public class LightActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Thread thread = new Thread(() -> {
+                Thread thread2 = new Thread(() -> {
                     try{
                         device.setBrightness(valueB);
-                        stateB.setText(Integer.toString(valueB));
-                        stateB.setTextColor(Color.GREEN);
                     } catch(NoClassDefFoundError e){
-                        System.out.println("Error " + e.getMessage());
+                        System.out.println("Error5 " + e.getMessage());
                     } catch(Exception e){
-                        System.out.println("Error " + e.getMessage());
+                        System.out.println("Error6 " + e.getMessage());
                     }
                 });
-                thread.start();
+                thread2.start();
+                br = valueB;
+                stateB.setText(Integer.toString(valueB));
             }
         });
 
@@ -306,7 +220,6 @@ public class LightActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressC, boolean fromUser) {
                 valueC = progressC + minC;
-
                 stateC.setText(Integer.toString(valueC));
             }
 
@@ -317,23 +230,21 @@ public class LightActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Thread thread = new Thread(() -> {
+                Thread thread3 = new Thread(() -> {
                     try{
                         device.setColorTemperature(valueC);
-                        stateC.setText(Integer.toString(valueC));
-                        stateC.setTextColor(Color.GREEN);
                     } catch(NoClassDefFoundError e){
-                        System.out.println("Error " + e.getMessage());
+                        System.out.println("Error7 " + e.getMessage());
                     } catch(Exception e){
-                        System.out.println("Error " + e.getMessage());
+                        System.out.println("Error8 " + e.getMessage());
                     }
                 });
+                thread3.start();
 
-                thread.start();
+                ct = valueC;
+                stateC.setText(Integer.toString(valueC));
             }
         });
-
-        prog = 1;
 
         Runnable myRunnable = new Runnable() {
             @Override
@@ -341,62 +252,110 @@ public class LightActivity extends AppCompatActivity {
                 while (connected == false) {
                     try {
                         Thread.sleep(500); // Waits for 1 second (1000 milliseconds)
-                        changeDevice(ip);
-
+                        progressBar.setProgress(prog);
+                        prog = prog + 1;
                         if (prog > 100) {
                             prog = prog - 100;
                         }
-
-                        progressBar.setProgress(prog);
-                        prog = prog + 1;
-
-                        System.out.println("properties: " + device.toString());
-                        System.out.println("properties: " + device.getClass().toString());
-
-                        //int brightness = Integer.valueOf(device.getProperties(BRIGHTNESS).values().iterator().next());
-                        //int colortemp = Integer.valueOf(device.getProperties(COLOR_TEMPERATURE).values().iterator().next());
-                        //System.out.println("brightness: " + device.getProperties());
-                        //System.out.println("colortemp: " + device.getProperties());
-                        System.out.println("1: " + YeelightProperty.values());
-                        System.out.println("2: " + YeelightProperty.valueOf("POWER").getValue());
-
-                        color.setProgress(5700 - 2700);
-                        bright.setProgress(50);
-                        progressLay.setVisibility(View.INVISIBLE);
-
+                        changeDevice(ip);
                         connected = true;
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        System.out.println("Error 9" + e.getMessage());
                     } catch(NoClassDefFoundError e){
-                        System.out.println("Error " + e.getMessage());
+                        System.out.println("Error 10" + e.getMessage());
                     }  catch(Exception e){
-                        System.out.println("Error " + e.getMessage());
+                        System.out.println("Error 11" + e.getMessage());
+                    }
+
+                    try {
+                        Log.d("Properties1", device.getProperties().toString());
+                    } catch (Exception e){
+                        System.out.println("Error 01" + e.getMessage());
+                    }
+                    catch (NoClassDefFoundError e){
+                        System.out.println("Error 01" + e.getMessage());
+                    }
+
+                    try {
+                        Log.d("Properties2", device.getProperties().values().toString());
+                    } catch (Exception e){
+                        System.out.println("Error 02" + e.getMessage());
+                    } catch (NoClassDefFoundError e){
+                        System.out.println("Error 02" + e.getMessage());
+                    }
+
+                    try {
+                        Log.d("Properties3", device.getProperties(YeelightProperty.POWER).values().toString());
+                    } catch (Exception e){
+                        System.out.println("Error 03" + e.getMessage());
+                    } catch (NoClassDefFoundError e){
+                        System.out.println("Error 03" + e.getMessage());
                     }
                 }
+
+                handler.post(new Runnable() {
+                    public void run() {
+                        progressLay.setVisibility(View.INVISIBLE);
+                    }
+                });
             };
         };
 
         Thread myThread = new Thread(myRunnable);
         myThread.start();
+    }
 
+    private void setDevice() {
+        try {
+            device.setBrightness(br);
+            device.setColorTemperature(ct);
+        } catch (YeelightResultErrorException e) {
+            System.out.println("Error12 " + e.getMessage());
+        } catch (YeelightSocketException e) {
+            System.out.println("Error13 " + e.getMessage());
+        } catch(NoClassDefFoundError e){
+        System.out.println("Error14 " + e.getMessage());
+        }
     }
 
     /* MAIN */
 
     public void changeDevice(String ip){
+        changeBC();
         Thread thread = new Thread(() -> {
-            try{
+            try {
                 device = new YeelightDevice(ip, 55443, YeelightEffect.SMOOTH, 500);
-            }
-            catch(Exception e){
-                System.out.println("Error " + e.getMessage());
+            } catch (YeelightSocketException e) {
+                e.printStackTrace();
             }
         });
         thread.start();
+        setDevice();
+    }
+
+    public void changeBC() {
+        try{
+            stateB.setText(String.valueOf(br));
+            bright.setProgress(br);
+            stateC.setText(String.valueOf(ct));
+            color.setProgress(ct-2700);
+        }
+        catch(Exception e){
+            System.out.println("Error15 " + e.getMessage());
+        }
+    }
+
+    public void saveBCI() {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("br", String.valueOf(br));
+        editor.putString("ct", String.valueOf(ct));
+        editor.putString("ip", ip);
+        editor.commit();
     }
 
     @Override
     protected void onDestroy() {
+        saveBCI();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mainWifi.setWifiEnabled(false);
         super.onDestroy();
@@ -405,6 +364,7 @@ public class LightActivity extends AppCompatActivity {
     public void onClickedClose() {
         popupWindow.dismiss();
         multicastLock.release();
+        changeBC();
     }
 
     public Boolean checkWIFI() {
@@ -418,7 +378,6 @@ public class LightActivity extends AppCompatActivity {
     }
     /* /MAIN */
     /* SEARCH */
-
 
     private Thread mSearchThread = null;
     private void searchDevice() {
@@ -449,7 +408,7 @@ public class LightActivity extends AppCompatActivity {
                             }
                             buffer.append((char) bytes[i]);
                         }
-                        Log.d("socket", "got message:" + buffer.toString());
+                        //Log.d("socket", "got message:" + buffer.toString());
                         if (!buffer.toString().contains("yeelight")) {
                             mHandler.obtainMessage(MSG_SHOWLOG, "收到一条消息,不是Yeelight灯泡").sendToTarget();
                             return;
@@ -490,7 +449,7 @@ public class LightActivity extends AppCompatActivity {
 
         public MyAdapter(Context context) {
             mLayoutInflater = LayoutInflater.from(context);
-            mLayoutResource = android.R.layout.simple_list_item_2;
+            mLayoutResource = R.layout.list_view_lay;
         }
 
         @Override
@@ -517,18 +476,15 @@ public class LightActivity extends AppCompatActivity {
             } else {
                 view = convertView;
             }
-            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            TextView textView = (TextView) view.findViewById(R.id.txtModel);
             textView.setText("Model: "+data.get("model") );
-
-            Log.d(TAG, "name = " + textView.getText().toString());
-            TextView textSub = (TextView) view.findViewById(android.R.id.text2);
+            TextView textSub = (TextView) view.findViewById(R.id.txtLocation);
             textSub.setText("IP: " + data.get("Location"));
             return view;
         }
     }
     private boolean hasAdd(HashMap<String,String> bulbinfo){
         for (HashMap<String,String> info : mDeviceList){
-            Log.d(TAG, "location params = " + bulbinfo.get("Location"));
             if (info.get("Location").equals(bulbinfo.get("Location"))){
                 return true;
             }
@@ -537,4 +493,86 @@ public class LightActivity extends AppCompatActivity {
     }
 
     /* /SEARCH */
+
+    public void selClicked() {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.popup_window,
+                (ViewGroup) LightActivity.this.findViewById(R.id.popup_element));
+
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        popupWindow = new PopupWindow(layout, width, height, focusable);
+
+        layout.post(new Runnable() {
+            public void run() {
+                popupWindow.showAtLocation(allLay, Gravity.BOTTOM, 0, 0);
+            }
+        });
+
+        btnClose = layout.findViewById(R.id.btnClose);
+        btnSearch = layout.findViewById(R.id.btnSearch);
+        txtConIp = layout.findViewById(R.id.txtIP);
+        mListView = layout.findViewById(R.id.deviceList);
+
+        if (ip.equals("")) {
+            txtConIp.setText("N/A");
+        } else {
+            txtConIp.setText(ip);
+        }
+
+        mAdapter = new MyAdapter(this);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String, String> bulbInfo = mDeviceList.get(position);
+                String ipinfo = bulbInfo.get("Location").replaceAll(" ","");
+                String new_ip = ipinfo.split(":")[0];
+                String new_port = ipinfo.split(":")[1];
+
+                String powerinfo = bulbInfo.get("power").replaceAll(" ","");
+                String brightinfo = bulbInfo.get("bright").replaceAll(" ","");
+                String ctinfo = bulbInfo.get("ct").replaceAll(" ","");
+
+                ip = new_ip;
+                br = Integer.valueOf(brightinfo);
+                ct = Integer.valueOf(ctinfo);
+                saveBCI();
+
+                mDeviceList.clear();
+
+                try{
+                    changeDevice(ip);
+                }
+                catch(Exception e){
+                    System.out.println("Error16 " + e.getMessage());
+                }
+
+                onClickedClose();
+            }
+        });
+
+        WifiManager wm = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        multicastLock = wm.createMulticastLock("test");
+        multicastLock.acquire();
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickedClose();
+            }
+        });
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchDevice();
+            }
+
+        });
+
+        searchDevice();
+    }
 }

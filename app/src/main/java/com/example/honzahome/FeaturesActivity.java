@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 public class FeaturesActivity extends AppCompatActivity {
 
-    Button btnTem, btnLig, btnSet;
+    ImageButton btnTem, btnLig, btnSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,5 +43,11 @@ public class FeaturesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        super.onDestroy();
     }
 }
