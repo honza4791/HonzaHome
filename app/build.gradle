@@ -6,7 +6,7 @@ android {
     compileSdk 30
 
     defaultConfig {
-        applicationId "com.example.honzahome"
+        applicationId "com.honzacorp.honzahome"
         minSdk 18
         targetSdk 30
         versionCode 1

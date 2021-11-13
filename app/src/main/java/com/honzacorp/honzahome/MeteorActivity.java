@@ -1,4 +1,4 @@
-package com.example.honzahome;
+package com.honzacorp.honzahome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class TempActivity extends AppCompatActivity implements GetRequestActivity.AsyncResponse {
+public class MeteorActivity extends AppCompatActivity implements GetRequestActivity.AsyncResponse {
 
     Button btnSwitch, btnUpdate;
     TextView txtState, txtTemp, txtHum;
@@ -23,12 +23,15 @@ public class TempActivity extends AppCompatActivity implements GetRequestActivit
     Handler handler = new Handler();
     Runnable runnable;
     int delay = 3*1000;
+    String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_temp);
+        setContentView(R.layout.activity_meteor);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        key = getString(R.string.AppsScriptKey);
 
         if (checkWIFI() == false) {
             mainWifi.setWifiEnabled(true);
@@ -56,11 +59,11 @@ public class TempActivity extends AppCompatActivity implements GetRequestActivit
     }
 
     private void clickedU() {
-        new GetRequestActivity(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=l");
+        new GetRequestActivity(this).execute("https://script.google.com/macros/s/" + key + "/exec?z=l");
     }
 
     private void clickedS() {
-        new GetRequestActivity(this).execute("https://script.google.com/macros/s/AKfycbxbsHHoQrJKOCgqLcgWqnkMVGHO3zM6taS6Xg7-HVmse-0vY-bIB5257FtMAOoFU7S_/exec?z=s");
+        new GetRequestActivity(this).execute("https://script.google.com/macros/s/" + key + "/exec?z=s");
     }
 
     @Override

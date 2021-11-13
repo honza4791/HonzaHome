@@ -1,4 +1,4 @@
-package com.example.honzahome;
+package com.honzacorp.honzahome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,7 +25,7 @@ public class FeaturesActivity extends AppCompatActivity {
 
         btnTem.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(FeaturesActivity.this, TempActivity.class);
+                Intent intent = new Intent(FeaturesActivity.this, MeteorActivity.class);
                 startActivity(intent);
             }
         });

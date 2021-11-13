@@ -12,14 +12,14 @@
         android:layout_height="50dp"
         android:layout_marginTop="-5dp"
         android:gravity="center"
-        android:text="@string/close"
+        android:text="@string/cls"
         />
 
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="@string/search"
+        android:text="@string/srch"
         android:layout_marginBottom="-5dp"/>
 
     <LinearLayout
@@ -29,7 +29,6 @@
         android:layout_marginBottom="5dp" >
 
         <TextView
-            android:id="@+id/txtCon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -60,7 +59,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginLeft="10dp"
         android:textColor="#FFFFFF"
-        android:text="@string/found" />
+        android:text="@string/fnd" />
 
     <LinearLayout
         android:layout_width="match_parent"

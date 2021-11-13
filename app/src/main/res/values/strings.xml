@@ -1,36 +1,33 @@
 <resources>
     <string name="app_name">HonzaHome</string>
-    <string name="title_activity_main">MainActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-    <!-- Temp -->
+
+    <!-- Features -->
+    <string name="meteor">HonzaMeteor</string>
+    <string name="light">HonzaYeelight</string>
+    <string name="settings">Settings</string>
+
+    <!-- Meteor -->
     <string name="tmp">Temperature:\u0020</string>
     <string name="hum">Humidity:\u0020</string>
-    <string name="sw">toggle switch</string>
-    <string name="zerod">0 °C</string>
-    <string name="zerop">0 %</string>
-    <string name="title_activity_main2">MainActivity2</string>
-    <string name="state">State:\u0020</string>
+    <string name="sw_t">toggle switch</string>
+    <string name="sw_s">Switch state:\u0020</string>
+    <string name="ref">refresh</string>
+    <string name="zero_d">0 °C</string>
+    <string name="zero_p">0 %</string>
     <string name="na">N/A</string>
-    <string name="temp">HonzaMeteor</string>
-    <string name="light">HonzaYeelight</string>
+
     <!-- Light -->
-    <string name="on">ON</string>
-    <string name="select_device">device</string>
-    <string name="profiles">profiles</string>
-    <string name="brightness">Brightness: </string>
-    <string name="color">Color Temperature: </string>
-    <string name="status">State: </string>
-    <string name="not_connected">---</string>
-    <string name="close">Close</string>
-    <string name="search">search</string>
-    <string name="connecting">... connecting ...</string>
+    <string name="li_t">toggle light</string>
+    <string name="dev">device</string>
+    <string name="bri">Brightness: </string>
+    <string name="col">Color Temperature: </string>
+    <string name="not">---</string>
+    <string name="con">... connecting ...</string>
+
+    <!-- Popup -->
+    <string name="cls">Close</string>
+    <string name="srch">search</string>
     <string name="ip">Connected IP:\u0020</string>
-    <string name="found">Devices Found:</string>
-    <!-- Settings -->
-    <string name="settings">Settings</string>
-    <string name="up">refresh</string>
+    <string name="fnd">Devices Found:</string>
+
 </resources>

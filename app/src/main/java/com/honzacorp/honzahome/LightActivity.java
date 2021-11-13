@@ -1,8 +1,7 @@
-package com.example.honzahome;
+package com.honzacorp.honzahome;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +27,11 @@ import android.widget.TextView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
-
 import com.mollin.yapi.YeelightDevice;
 import com.mollin.yapi.enumeration.YeelightEffect;
 import com.mollin.yapi.enumeration.YeelightProperty;
 import com.mollin.yapi.exception.YeelightResultErrorException;
 import com.mollin.yapi.exception.YeelightSocketException;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -47,7 +43,7 @@ public class LightActivity extends AppCompatActivity {
 
     /* MAIN */
     TextView stateB, stateC, txtConIp;
-    Button button, btnSel, btnClose, btnSearch, btnPrgClose;
+    Button btnPow, btnDev, btnClose, btnSearch, btnPrgClose;
     YeelightDevice device;
     SeekBar bright, color;
     WifiManager mainWifi;
@@ -62,7 +58,6 @@ public class LightActivity extends AppCompatActivity {
     /* /MAIN */
 
     /* SEARCH */
-    private static final String TAG = "APITEST";
     private static final int MSG_SHOWLOG = 0;
     private static final int MSG_FOUND_DEVICE = 1;
     private static final int MSG_DISCOVER_FINISH = 2;
@@ -79,7 +74,6 @@ public class LightActivity extends AppCompatActivity {
     private ListView mListView;
     private MyAdapter mAdapter;
     List<HashMap<String, String>> mDeviceList = new ArrayList<HashMap<String, String>>();
-    private Button mBtnSearch;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -114,26 +108,23 @@ public class LightActivity extends AppCompatActivity {
         connected = false;
         stateB = findViewById(R.id.txtStateBval);
         stateC = findViewById(R.id.txtStateCval);
-        button = findViewById(R.id.btnOnOff);
+        btnPow = findViewById(R.id.btnOnOff);
         btnPrgClose = findViewById(R.id.btnPrgClose);
         bright = findViewById(R.id.seekBright);
         color = findViewById(R.id.seekColor);
-        btnSel  = findViewById(R.id.btnSel);
+        btnDev = findViewById(R.id.btnDev);
         progressLay = findViewById(R.id.progressLay);
         allLay = findViewById(R.id.all);
         progressBar = findViewById(R.id.progressBar);
         prog = 1;
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        ip = settings.getString("ip","").toString();
+        br = 1;
+        ct = 2701;
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
         }
-
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        ip = settings.getString("ip","").toString();
-        br = Integer.valueOf(settings.getString("br","1").toString());
-        ct = Integer.valueOf(settings.getString("ct","2701").toString());
-        changeBC();
 
         if (checkWIFI() == false) {
             mainWifi.setWifiEnabled(true);
@@ -141,7 +132,7 @@ public class LightActivity extends AppCompatActivity {
 
         if (ip.equals("")) {
             progressLay.setVisibility(View.INVISIBLE);
-            selClicked();
+            devClicked();
         } else {
             progressLay.setVisibility(View.VISIBLE);
             btnPrgClose.setOnClickListener(new View.OnClickListener() {
@@ -151,27 +142,27 @@ public class LightActivity extends AppCompatActivity {
             });
         }
 
-        button.setOnClickListener(v -> {
+        btnPow.setOnClickListener(v -> {
 
             Thread thread = new Thread(() -> {
                 try{
                     setDevice();
                     device.toggle();
                 } catch(NoClassDefFoundError e){
-                    System.out.println("Error1 " + e.getMessage());
+                    System.out.println("Error_btnPow_1 " + e.getMessage());
                 } catch (YeelightSocketException e) {
-                    System.out.println("Error2 " + e.getMessage());
+                    System.out.println("Error_btnPow_2 " + e.getMessage());
                 } catch (YeelightResultErrorException e) {
-                    System.out.println("Error3 " + e.getMessage());
+                    System.out.println("Error_btnPow_3 " + e.getMessage());
                 }  catch(Exception e){
-                    System.out.println("Error4 " + e.getMessage());
+                    System.out.println("Error_btnPow_4 " + e.getMessage());
                 }
             });
             thread.start();
         });
 
-        btnSel.setOnClickListener(v -> {
-            selClicked();
+        btnDev.setOnClickListener(v -> {
+            devClicked();
         });
 
         bright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -202,9 +193,9 @@ public class LightActivity extends AppCompatActivity {
                     try{
                         device.setBrightness(valueB);
                     } catch(NoClassDefFoundError e){
-                        System.out.println("Error5 " + e.getMessage());
+                        System.out.println("Error_bright_1 " + e.getMessage());
                     } catch(Exception e){
-                        System.out.println("Error6 " + e.getMessage());
+                        System.out.println("Error_bright_2 " + e.getMessage());
                     }
                 });
                 thread2.start();
@@ -234,9 +225,9 @@ public class LightActivity extends AppCompatActivity {
                     try{
                         device.setColorTemperature(valueC);
                     } catch(NoClassDefFoundError e){
-                        System.out.println("Error7 " + e.getMessage());
+                        System.out.println("Error_color_1 " + e.getMessage());
                     } catch(Exception e){
-                        System.out.println("Error8 " + e.getMessage());
+                        System.out.println("Error_color_2 " + e.getMessage());
                     }
                 });
                 thread3.start();
@@ -251,7 +242,7 @@ public class LightActivity extends AppCompatActivity {
             public void run() {
                 while (connected == false) {
                     try {
-                        Thread.sleep(500); // Waits for 1 second (1000 milliseconds)
+                        Thread.sleep(500);
                         progressBar.setProgress(prog);
                         prog = prog + 1;
                         if (prog > 100) {
@@ -260,42 +251,45 @@ public class LightActivity extends AppCompatActivity {
                         changeDevice(ip);
                         connected = true;
                     } catch (InterruptedException e) {
-                        System.out.println("Error 9" + e.getMessage());
+                        System.out.println("Error_myRunnable_1" + e.getMessage());
                     } catch(NoClassDefFoundError e){
-                        System.out.println("Error 10" + e.getMessage());
+                        System.out.println("Error_myRunnable_2" + e.getMessage());
                     }  catch(Exception e){
-                        System.out.println("Error 11" + e.getMessage());
+                        System.out.println("Error_myRunnable_3" + e.getMessage());
                     }
 
-                    try {
+                    /*try {
                         Log.d("Properties1", device.getProperties().toString());
                     } catch (Exception e){
-                        System.out.println("Error 01" + e.getMessage());
+                        System.out.println("Error_properties_1" + e.getMessage());
                     }
                     catch (NoClassDefFoundError e){
-                        System.out.println("Error 01" + e.getMessage());
+                        System.out.println("Error_properties_2" + e.getMessage());
                     }
 
                     try {
                         Log.d("Properties2", device.getProperties().values().toString());
                     } catch (Exception e){
-                        System.out.println("Error 02" + e.getMessage());
+                        System.out.println("Error_properties_3" + e.getMessage());
                     } catch (NoClassDefFoundError e){
-                        System.out.println("Error 02" + e.getMessage());
+                        System.out.println("Error_properties_4" + e.getMessage());
                     }
 
                     try {
                         Log.d("Properties3", device.getProperties(YeelightProperty.POWER).values().toString());
+                        Log.d("Properties3", device.getProperties(YeelightProperty.BRIGHTNESS).values().toString());
+                        Log.d("Properties3", device.getProperties(YeelightProperty.COLOR_TEMPERATURE).values().toString());
                     } catch (Exception e){
-                        System.out.println("Error 03" + e.getMessage());
+                        System.out.println("Error_properties_5" + e.getMessage());
                     } catch (NoClassDefFoundError e){
-                        System.out.println("Error 03" + e.getMessage());
-                    }
+                        System.out.println("Error_properties_6" + e.getMessage());
+                    }*/
                 }
 
                 handler.post(new Runnable() {
                     public void run() {
                         progressLay.setVisibility(View.INVISIBLE);
+                        changeBC();
                     }
                 });
             };
@@ -305,32 +299,19 @@ public class LightActivity extends AppCompatActivity {
         myThread.start();
     }
 
+    /* MAIN */
+
     private void setDevice() {
         try {
             device.setBrightness(br);
             device.setColorTemperature(ct);
         } catch (YeelightResultErrorException e) {
-            System.out.println("Error12 " + e.getMessage());
+            System.out.println("Error_setDevice_1" + e.getMessage());
         } catch (YeelightSocketException e) {
-            System.out.println("Error13 " + e.getMessage());
+            System.out.println("Error_setDevice_2" + e.getMessage());
         } catch(NoClassDefFoundError e){
-        System.out.println("Error14 " + e.getMessage());
+        System.out.println("Error_setDevice_3" + e.getMessage());
         }
-    }
-
-    /* MAIN */
-
-    public void changeDevice(String ip){
-        changeBC();
-        Thread thread = new Thread(() -> {
-            try {
-                device = new YeelightDevice(ip, 55443, YeelightEffect.SMOOTH, 500);
-            } catch (YeelightSocketException e) {
-                e.printStackTrace();
-            }
-        });
-        thread.start();
-        setDevice();
     }
 
     public void changeBC() {
@@ -341,14 +322,39 @@ public class LightActivity extends AppCompatActivity {
             color.setProgress(ct-2700);
         }
         catch(Exception e){
-            System.out.println("Error15 " + e.getMessage());
+            System.out.println("Error_changeBC_1" + e.getMessage());
         }
+    }
+
+    public void getBC() {
+        try {
+            String b = device.getProperties(YeelightProperty.BRIGHTNESS).values().toString();
+            String c = device.getProperties(YeelightProperty.COLOR_TEMPERATURE).values().toString();
+            br = Integer.valueOf(b.substring(1, b.length() - 1));
+            ct = Integer.valueOf(c.substring(1, c.length() - 1));
+        } catch (Exception e){
+            System.out.println("Error_getBC_1" + e.getMessage());
+        } catch (NoClassDefFoundError e){
+            System.out.println("Error_getBC_2" + e.getMessage());
+        }
+    }
+
+    public void changeDevice(String ip){
+        Thread thread = new Thread(() -> {
+            try {
+                device = new YeelightDevice(ip, 55443, YeelightEffect.SMOOTH, 500);
+            } catch (YeelightSocketException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
+        getBC();
+        setDevice();
+        changeBC();
     }
 
     public void saveBCI() {
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("br", String.valueOf(br));
-        editor.putString("ct", String.valueOf(ct));
         editor.putString("ip", ip);
         editor.commit();
     }
@@ -494,7 +500,7 @@ public class LightActivity extends AppCompatActivity {
 
     /* /SEARCH */
 
-    public void selClicked() {
+    public void devClicked() {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.popup_window,
@@ -502,7 +508,7 @@ public class LightActivity extends AppCompatActivity {
 
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
+        boolean focusable = true;
         popupWindow = new PopupWindow(layout, width, height, focusable);
 
         layout.post(new Runnable() {
@@ -547,7 +553,7 @@ public class LightActivity extends AppCompatActivity {
                     changeDevice(ip);
                 }
                 catch(Exception e){
-                    System.out.println("Error16 " + e.getMessage());
+                    System.out.println("Error_devClicked_1" + e.getMessage());
                 }
 
                 onClickedClose();
@@ -555,7 +561,7 @@ public class LightActivity extends AppCompatActivity {
         });
 
         WifiManager wm = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        multicastLock = wm.createMulticastLock("test");
+        multicastLock = wm.createMulticastLock("betterWiFi");
         multicastLock.acquire();
 
         btnClose.setOnClickListener(new View.OnClickListener() {

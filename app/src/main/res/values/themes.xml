@@ -6,9 +6,9 @@
         <item name="colorPrimaryVariant">#58ACF7</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#939597</item>
-        <item name="colorSecondaryVariant">#939597</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">#393939</item>
+        <item name="colorSecondaryVariant">#393939</item>
+        <item name="colorOnSecondary">#FF000000</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
@@ -19,7 +19,4 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.HonzaHome.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.HonzaHome.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

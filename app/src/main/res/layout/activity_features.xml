@@ -33,7 +33,7 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:textColor="#FFFFFF"
-                android:text="@string/temp" />
+                android:text="@string/meteor" />
         </LinearLayout>
 
         <LinearLayout

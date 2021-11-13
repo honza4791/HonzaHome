@@ -1,4 +1,4 @@
-package com.example.honzahome;
+package com.honzacorp.honzahome;
 
 import androidx.appcompat.app.AppCompatActivity;
 

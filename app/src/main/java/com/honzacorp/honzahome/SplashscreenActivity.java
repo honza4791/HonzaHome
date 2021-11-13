@@ -1,9 +1,7 @@
-package com.example.honzahome;
+package com.honzacorp.honzahome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.content.Intent;
 import android.os.Handler;
